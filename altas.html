@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar producto 🚀</title>
+    <link rel="stylesheet" href="./static/css/estilos.css">
+</head>
+
+<body>
+    <header>
+        <nav class="navbar-index ">
+            <img class="logo-nav" src="./static/imagenes/logos-nav.webp" alt="logo agencia de aprendizaje">
+        </nav>
+    </header>
+
+    <div class="logo-centrado">
+        <img src="./static/imagenes/logo_Codo.jpg" alt="logo">
+    </div>
+    <h1>Agregar Productos al Inventario</h1><br>
+
+    <!--enctype="multipart/form-data" es necesario para enviar archivos al back.-->
+    <form id="formulario" enctype="multipart/form-data">
+        
+        <label for="titulo">Titulo:</label>
+        <input type="text" id="titulo" name="titulo" required><br>
+
+        <label for="tecnica">Técnica:</label>
+        <input type="text" id="tecnica" name="tecnica" required><br>
+
+        <label for="medidas">Medidas:</label>
+        <input type="text" id="medidas" name="medidas" required><br>
+        <label for="medidas">Medidas:</label>
+        <input type="text" id="medidas" name="medidas" required
+
+        
+        <select type="number" id="tipo" name="tipo" required><br><br>
+        <!-- <label for="precio">Precio:</label>
+        <input type="number" step="0.01" id="precio" name="precio" required><br> -->
+
+        <label for="imagenObra">Imagen de Obra:</label>
+        <input type="file" id="imagenObra" name="imagenObra">
+  
+        <button type="submit">Agregar Obra</button>
+        <a href="index.html">Menu principal</a>
+    </form>
+
+    <script>
+        const URL = "http://127.0.0.1:5000/"
+
+        //Al subir al servidor, deberá utilizarse la siguiente ruta. USUARIO debe ser reemplazado por el nombre de usuario de Pythonanywhere
+        //const URL = "https://USUARIO.pythonanywhere.com/"
+        
+
+        // Capturamos el evento de envío del formulario
+        document.getElementById('formulario').addEventListener('submit', function (event) {
+            event.preventDefault(); // Evitamos que se envie el form 
+
+            var formData = new FormData(this);
+    
+            // Realizamos la solicitud POST al servidor
+            fetch(URL + 'obras', {
+                method: 'POST',
+                body: formData // Aquí enviamos formData. Dado que formData puede contener archivos, no se utiliza JSON.
+            })
+
+            //Después de realizar la solicitud POST, se utiliza el método then() para manejar la respuesta del servidor.
+            .then(function (response) {
+                    if (response.ok) { 
+                        //Si la respuesta es exitosa, convierte los datos de la respuesta a formato JSON.
+                        return response.json(); 
+                    } else {
+                        // Si hubo un error, lanzar explícitamente una excepción
+                        // para ser "catcheada" más adelante
+                        throw new Error('Error al agregar el producto.');
+                    }
+            })            //Esta función maneja los datos convertidos del JSON.
+
+                //Respuesta OK, muestra una alerta informando que el producto se agregó correctamente y limpia los campos del formulario para que puedan ser utilizados para un nuevo producto.
+                .then(function (data) {
+                    alert('Producto agregado correctamente.');
+                })
+
+                // En caso de error, mostramos una alerta con un mensaje de error.
+                .catch(function (error) {
+                    alert('Error al agregar el producto.');
+                })
+
+                // Limpiar el formulario en ambos casos (éxito o error)
+                .finally(function () {
+                    document.getElementById('titulo').value = "";
+                    document.getElementById('tecnica').value = "";
+                    document.getElementById('medidas').value = "";
+                    document.getElementById('precio').value = "";
+                });
+        })
+
+
+        fetch(URL + 'tipo_obras')
+            .then(function (response) {
+                if (response.ok) {
+                    //Si la respuesta es exitosa (response.ok), convierte el cuerpo de la respuesta de formato JSON a un objeto JavaScript y pasa estos datos a la siguiente promesa then.
+                    return response.json(); 
+            } else {
+                    // Si hubo un error, lanzar explícitamente una excepción para ser "catcheada" más adelante
+                    throw new Error('Error al obtener las productos.');
+                }
+            })        
+            .then(function (data) {
+                let selectTipo = document.getElementById('tipo'); //Selecciona el elemento del DOM donde se mostrarán los productos.
+
+                // Iteramos sobre cada producto y agregamos filas a la tabla
+                for (let tipoObra of data) {
+                    let opcionSelect = document.createElement('option'); //Crea una nueva fila de tabla (<tr>) para cada producto.
+                        opcionSelect.innerHTML = '<option>' + tipoObra.Tipo + '</option>' 
+    
+                    //Una vez que se crea la fila con el contenido del producto, se agrega a la tabla utilizando el método appendChild del elemento tablaProductos.
+                    selectTipo.appendChild(opcionSelect);
+                }
+            })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </script>
+</body>
+
+</html>
