@@ -61,10 +61,10 @@ class Catalogo:
         self.cursor = self.conn.cursor(dictionary=True)
         
     #----------------------------------------------------------------tecnica
-    def agregar_obra(self, titulo,tecnica,medidas,idtipo,imagen):
+    def agregar_obra(self, titulo,tecnica,medidas,tipo,imagen):
                
-        sql = "INSERT INTO obras (titulo,tecnica,medidas,idtipo,imagen) VALUES (%s,%s,%s,%s,%s)"
-        valores = (titulo,tecnica,medidas,idtipo,imagen)
+        sql = "INSERT INTO obras (titulo,tecnica,medidas,tipo,imagen) VALUES (%s,%s,%s,%s,%s)"
+        valores = (titulo,tecnica,medidas,tipo,imagen)
 
         self.cursor.execute(sql, valores)        
         self.conn.commit()
@@ -87,7 +87,7 @@ class Catalogo:
     #----------------------------------------------------------------
 
     def listar_obras(self):
-        self.cursor.execute("SELECT * FROM view_obras")
+        self.cursor.execute("SELECT * FROM obras")
         obras = self.cursor.fetchall()
         return obras
     
@@ -175,11 +175,15 @@ def agregar_obra():
     #Recojo los datos del form
     titulo = request.form['titulo']
     tecnica = request.form['tecnica']
-    medidas = request.form['medidas']
+    medidas = request.form['medidaAlto'] +' x '+ request.form['medidaAncho']
     tipo = request.form['tipo']
-    imagen = request.files['imagenObra']
+    caca= request.form.get('tipo')
+    print(f"Valor seleccionado: {caca}")  
 
+
+    imagen = request.files['imagenObra']
     nombre_imagen=""
+
 
     
     # Genero el nombre de la imagen

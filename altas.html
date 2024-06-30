@@ -30,18 +30,20 @@
         <label for="tecnica">Técnica:</label>
         <input type="text" id="tecnica" name="tecnica" required><br>
 
-        <label for="medidas">Medidas:</label>
-        <input type="text" id="medidas" name="medidas" required><br>
-        <label for="medidas">Medidas:</label>
-        <input type="text" id="medidas" name="medidas" required
 
-        
+        <div>       
+            <label for="medidaAlto">Alto (cm):</label>
+            <input class="medidas" type="number" id="medidaAlto" name="medidaAlto" required>
+
+            <label for="medidaAncho">Ancho (cm):</label>
+            <input class="medidas" type="number" id="medidaAncho" name="medidaAncho" required>
+        </div>
+
+        <label class=tipo for="tipo">Tipo:</label>
         <select type="number" id="tipo" name="tipo" required><br><br>
-        <!-- <label for="precio">Precio:</label>
-        <input type="number" step="0.01" id="precio" name="precio" required><br> -->
 
         <label for="imagenObra">Imagen de Obra:</label>
-        <input type="file" id="imagenObra" name="imagenObra">
+        <input type="file" id="imagenObra" name="imagenObra"> <br><br>
   
         <button type="submit">Agregar Obra</button>
         <a href="index.html">Menu principal</a>
@@ -92,8 +94,8 @@
                 .finally(function () {
                     document.getElementById('titulo').value = "";
                     document.getElementById('tecnica').value = "";
-                    document.getElementById('medidas').value = "";
-                    document.getElementById('precio').value = "";
+                    document.getElementById('medidaAlto').value = "";
+                    document.getElementById('medidaAncho').value = "";
                 });
         })
 
@@ -107,16 +109,18 @@
                     // Si hubo un error, lanzar explícitamente una excepción para ser "catcheada" más adelante
                     throw new Error('Error al obtener las productos.');
                 }
-            })        
-            .then(function (data) {
-                let selectTipo = document.getElementById('tipo'); //Selecciona el elemento del DOM donde se mostrarán los productos.
+            })   
 
-                // Iteramos sobre cada producto y agregamos filas a la tabla
+                 //Agrego las opciones en el combo de tipo de tablaObras 
+            .then(function (data) {
+                let selectTipo = document.getElementById('tipo'); //Selecciona el elemento del DOM donde se mostrarán las obras.
+
+                // Iteramos sobre cada obra y agregamos filas a la tabla
                 for (let tipoObra of data) {
                     let opcionSelect = document.createElement('option'); //Crea una nueva fila de tabla (<tr>) para cada producto.
-                        opcionSelect.innerHTML = '<option>' + tipoObra.Tipo + '</option>' 
-    
-                    //Una vez que se crea la fila con el contenido del producto, se agrega a la tabla utilizando el método appendChild del elemento tablaProductos.
+                        opcionSelect.innerHTML = '<option value='+ tipoObra.Id + '>' + tipoObra.Tipo + '</option>' 
+
+                                            //Una vez que se crea la fila con el contenido del producto, se agrega a la tabla utilizando el método appendChild del elemento tablaProductos.
                     selectTipo.appendChild(opcionSelect);
                 }
             })
