@@ -5,23 +5,22 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agregar producto 🚀</title>
+    <title>Agregar obra </title>
     <link rel="stylesheet" href="./static/css/estilos.css">
 </head>
 
 <body>
     <header>
         <nav class="navbar-index ">
-            <img class="logo-nav" src="./static/imagenes/logos-nav.webp" alt="logo agencia de aprendizaje">
+            <img class="logo-nav" src="./static/imagenes/imglogo.jpg" alt="logo ODB">
         </nav>
     </header>
 
     <div class="logo-centrado">
-        <img src="./static/imagenes/logo_Codo.jpg" alt="logo">
+        <img class="img-osky" src="./static/imagenes/imglogo.jpg" alt="logo ODB">
     </div>
-    <h1>Agregar Productos al Inventario</h1><br>
+    <h1>Agregar obra al Portfolio </h1><br>
 
-    <!--enctype="multipart/form-data" es necesario para enviar archivos al back.-->
     <form id="formulario" enctype="multipart/form-data">
         
         <label for="titulo">Titulo:</label>
@@ -46,7 +45,7 @@
         <input type="file" id="imagenObra" name="imagenObra"> <br><br>
   
         <button type="submit">Agregar Obra</button>
-        <a href="index.html">Menu principal</a>
+        <button type="button" onclick="window.location.href='index.html'">Menu principal</button>
     </form>
 
     <script>
