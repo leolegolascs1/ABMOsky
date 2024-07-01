@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+..<!DOCTYPE html>
 <html lang="es">
 
 <head>
@@ -35,11 +35,14 @@
                 <label for="tituloModificar">Titulo:</label>
                 <input type="text" id="tituloModificar" required><br>
 
-                <label for="tecnicaModificar">Tecnica:</label>
+                <label for="tecnicaModificar">Técnica:</label>
                 <input type="text" id="tecnicaModificar" required><br>
-
+          
                 <label for="medidasModificar">Medidas:</label>
                 <input type="text" id="medidasModificar" required><br>
+                
+                <!-- <label for="tipoModificar">Tipo:</label>
+                <input type="text" id="tipoModificar" required><br> -->
 
                 <img id="imagen-actual" style="max-width: 200px; display: none;">
 
@@ -64,8 +67,6 @@
         let codigo = '';
         let titulo = '';
         let tecnica = '';
-        let medidas = '';
-        let tipo = '';
         let imagen_url = '';
         let imagenSeleccionada = null;
         let imagenUrlTemp = null;
@@ -75,16 +76,40 @@
         document.getElementById('form-guardar-cambios').addEventListener('submit', guardarCambios);
         document.getElementById('nuevaImagen').addEventListener('change', seleccionarImagen);
 
+        fetch(URL + 'tipo_obras')
+            .then(function (response) {
+                if (response.ok) {
+                    //Si la respuesta es exitosa (response.ok), convierte el cuerpo de la respuesta de formato JSON a un objeto JavaScript y pasa estos datos a la siguiente promesa then.
+                    return response.json(); 
+            } else {
+                    // Si hubo un error, lanzar explícitamente una excepción para ser "catcheada" más adelante
+                    throw new Error('Error al obtener las productos.');
+                }
+            })   
+
+                 //Agrego las opciones en el combo de tipo de tablaObras 
+            .then(function (data) {
+                let selectTipo = document.getElementById('tipoModificar'); //Selecciona el elemento del DOM donde se mostrarán las obras.
+
+                // Iteramos sobre cada obra y agregamos filas a la tabla
+                for (let tipoObra of data) {
+                    let opcionSelect = document.createElement('option'); //Crea una nueva fila de tabla (<tr>) para cada producto.
+                        opcionSelect.innerHTML = '<option value='+ tipoObra.Id + '>' + tipoObra.Tipo + '</option>' 
+
+                                            //Una vez que se crea la fila con el contenido del producto, se agrega a la tabla utilizando el método appendChild del elemento tablaProductos.
+                    selectTipo.appendChild(opcionSelect);
+                }
+            })
         // Se ejecuta cuando se envía el formulario de consulta. Realiza una solicitud GET a la API y obtiene los datos del producto correspondiente al código ingresado.
         function obtenerObra(event) {
             event.preventDefault();
             codigo = document.getElementById('codigo').value;
-            fetch(URL +'obras/'+ codigo)
+            fetch(URL + 'obras/' + codigo)
                 .then(response => {
                     if (response.ok) {
                         return response.json()
                     } else {
-                        throw new Error('Error al obtener los  x xdatos del producto.')
+                        throw new Error('Error al obtener los datos del producto.')
                     }
                 })
                 .then(data => {
@@ -93,16 +118,13 @@
                     medidas = data.Medidas;
                     tipo = data.Tipo;
                     imagen_url = data.Imagen;
-                   // precio = data.Precio;
-                    // precio = data.precio;
                     // proveedor = data.proveedor;
-
-                    // imagen_url = data.imagen_url;
+                    
                     mostrarDatosProducto = true; //Activa la vista del segundo formulario
                     mostrarFormulario();
                 })
                 .catch(error => {
-                    alert('Códigovv no encontrado.');
+                    alert('Código no encontrado.');
                 });
         }
 
@@ -111,8 +133,8 @@
             if (mostrarDatosProducto) {
                 document.getElementById('tituloModificar').value = titulo;
                 document.getElementById('tecnicaModificar').value = tecnica;
-                document.getElementById('medidasModificar').value = medidas;    
-                document.getElementById('imagenModificar').value = proveedor;
+                document.getElementById('tipoModificar').value = tipo;
+                document.getElementById('medidasModificar').value = medidas;
 
                 const imagenActual = document.getElementById('imagen-actual');
                 if (imagen_url && !imagenSeleccionada) { // Verifica si imagen_url no está vacía y no se ha seleccionado una imagen
@@ -150,17 +172,17 @@
 
             const formData = new FormData();
             formData.append('codigo', codigo);
-            formData.append('descripcion', document.getElementById('descripcionModificar').value);
-            formData.append('precio', document.getElementById('precioModificar').value);
-            formData.append('proveedor', document.getElementById('proveModificar').value);
-
+            formData.append('titulo', document.getElementById('tituloModificar').value);
+            formData.append('tecnica', document.getElementById('tecnicaModificar').value);
+            formData.append('medidas', document.getElementById('medidasModificar').value);
+            formData.append('tipo', document.getElementById('tipoModificar').value);
 
             // Si se ha seleccionado una imagen nueva, la añade al formData. 
             if (imagenSeleccionada) {
                 formData.append('imagen', imagenSeleccionada, imagenSeleccionada.name);
             }
 
-            fetch(URL + 'productos/' + codigo, {
+            fetch(URL + 'obras/' + codigo, {
                 method: 'PUT',
                 body: formData,
             })
@@ -185,7 +207,10 @@
         function limpiarFormulario() {
             document.getElementById('codigo').value = '';
             document.getElementById('tituloModificar').value = '';
-            document.getElementById('precioModificar').value = '';
+            document.getElementById('tecnicaModificar').value = '';
+            document.getElementById('medidasModificar').value = '';
+            document.getElementById('tipoModificar').value = '';
+            document.getElementById('nuevaImagen').value = '';
 
             const imagenActual = document.getElementById('imagen-actual');
             imagenActual.style.display = 'none';
@@ -193,15 +218,14 @@
             const imagenVistaPrevia = document.getElementById('imagen-vista-previa');
             imagenVistaPrevia.style.display = 'none';
 
-            codigo = '';
-            descripcion = '';
-            cantidad = '';
-            precio = '';
-            proveedor = '';
+            titulo = '';
+            tecnica = '';
+            medidas = '';
+            tipo = '';
             imagen_url = '';
             imagenSeleccionada = null;
             imagenUrlTemp = null;
-            mostrarDatosProducto = false;
+            // mostrarDatosProducto = false;
 
             document.getElementById('datos-producto').style.display = 'none';
         }
