@@ -77,9 +77,9 @@ class Catalogo:
         return self.cursor.fetchone()
 
     #----------------------------------------------------------------
-    def modificar_obra(self, codigo,titulo,cantidad):
-        sql = "UPDATE obras SET titulo = %s, cantidad = %s WHERE Id = %s"
-        valores = (codigo, titulo, cantidad)
+    def modificar_obra(self, codigo,nuevo_titulo,nuevo_tecnica,nuevo_medidas,nuevo_tipo,nueva_imagen):
+        sql = "UPDATE obras SET Titulo = %s, Tecnica = %s, Medidas = %s, Tipo = %s, Imagen = %s WHERE Id = %s"
+        valores = (nuevo_titulo, nuevo_tecnica,nuevo_medidas,nuevo_tipo,nueva_imagen,codigo)
         self.cursor.execute(sql, valores)
         self.conn.commit()
         return self.cursor.rowcount > 0
@@ -156,7 +156,7 @@ def listar_tipo_obras():
 #El método busca en la base de datos el producto con el código especificado y devuelve un JSON con los detalles del producto si lo encuentra, o None si no lo encuentra.
 @app.route("/obras/<int:codigo>", methods=["GET"])
 def mostrar_obra(codigo):
-    obrax = catalogo.mostrar_obra(codigo)
+    obrax = catalogo.consultar_obra(codigo)
     if obrax:
         return jsonify(obrax), 201
     else:
@@ -205,11 +205,10 @@ def agregar_obra():
 def modificar_obras(codigo):
     #Se recuperan los nuevos datos del formulario
     nuevo_titulo = request.form.get("titulo")
-    nueva_cantidad = request.form.get("cantidad")
-    # nuevo_precio = request.form.get("precio")
-    # nuevo_proveedor = request.form.get("proveedor")
-    
-    
+    nueva_tecnica = request.form.get("tecnica")
+    nuevo_medidas = request.form.get("medidas")
+    nuevo_tipo  = request.form.get("tipo")
+       
     # Verifica si se proporcionó una nueva imagen
     if 'imagen' in request.files:
         imagen = request.files['imagen']
@@ -234,13 +233,13 @@ def modificar_obras(codigo):
     
     else:
         # Si no se proporciona una nueva imagen, simplemente usa la imagen existente del producto
-        producto = catalogo.consultar_producto(codigo)
+        producto = catalogo.consultar_obra(codigo)
         if producto:
             nombre_imagen = producto["Imagen"]
 
 
     # Se llama al método modificar_producto pasando el codigo del producto y los nuevos datos.
-    if catalogo.modificar_obra(codigo,nuevo_titulo,nueva_cantidad):
+    if catalogo.modificar_obra(codigo,nuevo_titulo,nueva_tecnica,nuevo_medidas,nuevo_tipo,nombre_imagen):
         
         #Si la actualización es exitosa, se devuelve una respuesta JSON con un mensaje de éxito y un código de estado HTTP 200 (OK).
         return jsonify({"mensaje": "Producto modificado"}), 200
